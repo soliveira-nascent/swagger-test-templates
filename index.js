@@ -89,7 +89,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
     data.pathParams = config.pathParams;
   }
 
-  // used for checking requestData table
+  // used for checking mockData table
   var requestPath = (swagger.basePath) ? path.join(swagger.basePath, apiPath) : apiPath;
 
 
@@ -199,21 +199,21 @@ function getData(swagger, apiPath, operation, response, config, info) {
     data.path = requestPath;
   }
 
-  // get requestData from config if defined for this path:operation:response
-  if (config.requestData &&
-    config.requestData[requestPath] &&
-    config.requestData[requestPath][operation] &&
-    config.requestData[requestPath][operation][response]) {
-    data.requestData = config.requestData[requestPath][operation][response];
-    // if we have a GET request AND requestData, fill the path params accordingly
+  // get mockData from config if defined for this path:operation:response
+  if (config.mockData &&
+    config.mockData[requestPath] &&
+    config.mockData[requestPath][operation] &&
+    config.mockData[requestPath][operation][response]) {
+    data.mockData = config.mockData[requestPath][operation][response];
+    // if we have a GET request AND mockData, fill the path params accordingly
     if (operation === 'get') {
       var mockParameters = {};
 
       data.pathParameters.forEach(function(parameter) {
         // find the mock data for this parameter name
-        mockParameters[parameter.name] = data.requestData.filter(function(mock) {
+        mockParameters[parameter.name] = data.mockData.filter(function(mock) {
           return mock.hasOwnProperty(parameter.name);
-        })[0][parameter.name];
+        })['pathParams'][parameter.name];
       });
       // only write parameters if they are not already defined in config
       // @todo we should rework this with code above to be more readable
@@ -263,11 +263,12 @@ function testGenResponse(swagger, apiPath, operation, response, config, consume,
   source = fs.readFileSync(templatePath, 'utf8');
   templateFn = handlebars.compile(source, {noEscape: true});
 
-  if (data.requestData && data.requestData.length > 0) {
+  if (data.mockData && data.mockData.length > 0) {
     result = '';
-    for (var i = 0; i < data.requestData.length; i++) {
-      data.request = JSON.stringify(data.requestData[i].body);
-      data.requestMessage = data.requestData[i].description.replace(/'/g, "\\'");  // eslint-disable-line quotes
+    for (var i = 0; i < data.mockData.length; i++) {
+      data.mock = data.mockData[i]
+      data.mock.request = JSON.stringify(data.mockData[i].request)
+      data.mock.description = data.mockData[i].description.replace(/'/g, "\\'")  // eslint-disable-line quotes
       result += templateFn(data);
     }
   } else {
@@ -492,7 +493,7 @@ function testGen(swagger, config) {
   if (!targets || targets.length === 0) {
     _.forEach(result, function(results) {
       output.push({
-        name: '-test.js',
+        name: '.spec.js',
         test: results
       });
     });
@@ -515,10 +516,10 @@ function testGen(swagger, config) {
       // for output file name, replace / with -, and truncate the first /
       // eg: /hello/world -> hello-world
       filename = sanitize((target.replace(/\//g, '-').substring(1))
-        + '-test.js');
+        + '.spec.js');
       // for base path file name, change it to base-path
       if (target === '/') {
-        filename = 'base-path' + '-test.js';
+        filename = 'base-path' + '.spec.js';
       }
       output.push({
         name: filename,
