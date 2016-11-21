@@ -493,7 +493,7 @@ function testGen(swagger, config) {
   if (!targets || targets.length === 0) {
     _.forEach(result, function(results) {
       output.push({
-        name: '.spec.js',
+        name: '',
         test: results
       });
     });
@@ -515,11 +515,10 @@ function testGen(swagger, config) {
     _.forEach(targets, function(target) {
       // for output file name, replace / with -, and truncate the first /
       // eg: /hello/world -> hello-world
-      filename = sanitize((target.replace(/\//g, '-').substring(1))
-        + '.spec.js');
+      filename = sanitize((target.replace(/\//g, '-').substring(1)));
       // for base path file name, change it to base-path
       if (target === '/') {
-        filename = 'base-path' + '.spec.js';
+        filename = 'base-path';
       }
       output.push({
         name: filename,
