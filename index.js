@@ -550,7 +550,8 @@ handlebars.registerHelper('validateResponse', helpers.validateResponse);
 handlebars.registerHelper('length', helpers.length);
 handlebars.registerHelper('pathify', helpers.pathify);
 handlebars.registerHelper('printJSON', helpers.printJSON);
-
+handlebars.registerHelper('assign', helpers.assign);
+handlebars.registerHelper('ifIn', helpers.ifIn);
 
 module.exports = {
   testGen: testGen
