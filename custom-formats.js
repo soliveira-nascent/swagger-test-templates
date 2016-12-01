@@ -30,7 +30,7 @@ module.exports = function(zSchema) {
     return !isNaN(Date.parse(val));
   });
 
-  zSchema.registerFormat('dateTime', function(val) {
+  zSchema.registerFormat('date-time', function(val) {
     return !isNaN(Date.parse(val));
   });
 
