@@ -545,6 +545,7 @@ function testGen(swagger, config) {
 }
 
 handlebars.registerHelper('is', helpers.is);
+handlebars.registerHelper('isnt', helpers.isnt);
 handlebars.registerHelper('ifCond', helpers.ifCond);
 handlebars.registerHelper('validateResponse', helpers.validateResponse);
 handlebars.registerHelper('length', helpers.length);
